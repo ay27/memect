@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="240dp"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              android:layout_gravity="start"
+              android:id="@+id/left_drawer"
+              android:background="@android:color/white">
+
+    <ListView
+            android:id="@+id/drawer_activity_left_drawer"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:choiceMode="singleChoice"
+            android:divider="?android:attr/actionBarDivider"
+            android:headerDividersEnabled="true"
+            android:footerDividersEnabled="false"
+            />
+
+</LinearLayout>
