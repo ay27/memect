@@ -4,10 +4,11 @@
                                               android:orientation="vertical"
                                               android:layout_width="match_parent"
                                               android:layout_height="match_parent"
-                                              android:id="@+id/main_swipe_refresh">
+                                              android:id="@+id/main_swipe_refresh"
+        android:background="@color/gray_background">
     <ListView android:layout_width="match_parent" android:layout_height="match_parent"
               android:id="@+id/main_content_list"
               android:divider="@null"
-              android:dividerHeight="4dp"/>
+              android:dividerHeight="8dp"/>
 
 </android.support.v4.widget.SwipeRefreshLayout>

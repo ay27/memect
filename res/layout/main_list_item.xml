@@ -4,18 +4,26 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:background="@drawable/list_item_bg"
-              android:paddingBottom="4dp"
-              android:paddingLeft="12dp"
-              android:paddingRight="12dp"
+              android:layout_marginTop="4dp"
+              android:layout_marginBottom="4dp"
+              android:paddingLeft="20dp"
+              android:paddingRight="20dp"
         >
 
 
     <TextView android:layout_width="fill_parent" android:layout_height="wrap_content"
-            android:textSize="18sp"
+            android:textSize="20sp"
             android:textColor="@color/text_darker_gray_default_selector"
-            android:id="@+id/list_item_title"/>
+            android:id="@+id/list_item_title"
+            android:text="2015-10-22"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:gravity="right"/>
     <TextView android:layout_width="fill_parent" android:layout_height="wrap_content"
             android:textColor="@color/feed_list_item_text"
-            android:id="@+id/list_item_content"/>
+            android:id="@+id/list_item_content"
+            android:text="dfjkhdsfhdjghfdjhdfbgdfgdfmfgsdjhf\ndasdsad"
+            android:paddingBottom="4dp"
+            android:lineSpacingExtra="6sp"/>
 </LinearLayout>
 

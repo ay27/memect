@@ -84,8 +84,14 @@
 
 
     <color name="black">#000000</color>
-    <color name="white">#FFFFFF</color>
     <color name="dark_gray">#333333</color>
     <color name="light_gray">#AFFFFFFF</color>
+
+
+    <color name="keyword_1">#ff5bc0de</color>
+    <color name="keyword_2">#fff0ad4e</color>
+    <color name="keyword_3">#ff5cb85c</color>
+    <color name="keyword_4">#ffd9534f</color>
+    <color name="keyword_5">#ff428bca</color>
 
 </resources>

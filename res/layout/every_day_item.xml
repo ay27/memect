@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@drawable/list_item_bg"
+              android:layout_marginTop="8dp"
+              android:layout_marginBottom="8dp"
+              android:paddingLeft="20dp"
+              android:paddingRight="20dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp">
+
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/every_day_item_keyword_panel">
+    </LinearLayout>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/every_day_item_content"
+            android:textSize="16sp"
+            android:textColor="@color/feed_list_item_text"
+            android:lineSpacingExtra="6dp"
+            android:paddingTop="8dp"/>
+    <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/every_day_item_img"
+            android:layout_gravity="center_horizontal"
+            android:padding="4dp"/>
+
+    <LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal" android:gravity="end">
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:textColor="@color/text_darker_gray_default_selector"
+                android:text="by "/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/every_day_item_src" android:layout_gravity="end"
+            android:textColor="@color/text_darker_gray_default_selector"
+            />
+    </LinearLayout>
+</LinearLayout>

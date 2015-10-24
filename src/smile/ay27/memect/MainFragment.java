@@ -9,10 +9,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.*;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import org.jsoup.Jsoup;
@@ -21,7 +18,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import smile.ay27.memect.widget.CardsAnimationAdapter;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 
 /**
@@ -39,7 +36,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemClickLis
     private SwipeRefreshLayout.OnRefreshListener onRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
         @Override
         public void onRefresh() {
-            onStep4ListQuery();
+            adapter.refresh();
         }
     };
 
@@ -59,10 +56,8 @@ public class MainFragment extends Fragment implements AdapterView.OnItemClickLis
     public final View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = onStep1SetUpListView(inflater, container);
         onStep2SetUpAdapter();
-        onStep4ListQuery();
         return view;
     }
-
 
     public View onStep1SetUpListView(LayoutInflater inflater, ViewGroup container) {
 
@@ -86,12 +81,6 @@ public class MainFragment extends Fragment implements AdapterView.OnItemClickLis
         listView.setOnItemClickListener(this);
     }
 
-    public void onStep4ListQuery() {
-        if (!swipeRefreshLayout.isRefreshing()) {
-            swipeRefreshLayout.setRefreshing(true);
-        }
-        adapter.refresh();
-    }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -102,6 +91,18 @@ public class MainFragment extends Fragment implements AdapterView.OnItemClickLis
         startActivity(intent);
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        swipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                swipeRefreshLayout.setRefreshing(true);
+                adapter.refresh();
+            }
+        });
+    }
 
     class ContentLoaderAdapter extends BaseAdapter {
 
@@ -150,12 +151,18 @@ public class MainFragment extends Fragment implements AdapterView.OnItemClickLis
                 public static final String TAG = "request_data";
 
                 @Override
+                protected void onPreExecute() {
+                    super.onPreExecute();
+                    swipeRefreshLayout.setRefreshing(true);
+                }
+
+                @Override
                 protected ArrayList doInBackground(Void... params) {
                     items = new ArrayList<Item>();
 
                     Document doc = null;
                     try {
-                        doc = Jsoup.connect(links[position]).get();
+                        doc = Jsoup.connect(links[position]).timeout(10000).get();
                     } catch (IOException e) {
                         e.printStackTrace();
                         return null;
@@ -171,10 +178,17 @@ public class MainFragment extends Fragment implements AdapterView.OnItemClickLis
                         Elements contents = li.select("ul").select("li");
                         StringBuilder contentBuilder = new StringBuilder();
                         for (Element line : contents) {
-                            contentBuilder.append(line.text()).append("\n");
+                            contentBuilder.append(" - ").append(line.text()).append("\n");
                         }
                         items.add(new Item(date, contentBuilder.toString(), href));
 
+                    }
+
+                    File cacheDir = MemectApplication.appContext.getCacheDir();
+                    if (cacheDir.listFiles().length > 0) {
+                        for (File file : cacheDir.listFiles()) {
+                            file.delete();
+                        }
                     }
 
                     return items;
@@ -184,6 +198,9 @@ public class MainFragment extends Fragment implements AdapterView.OnItemClickLis
                 @Override
                 protected void onPostExecute(ArrayList arrayList) {
                     super.onPostExecute(arrayList);
+                    if (arrayList == null) {
+                        Toast.makeText(context, "network error", Toast.LENGTH_LONG).show();
+                    }
                     notifyDataSetInvalidated();
                     if (swipeRefreshLayout.isRefreshing()) {
                         swipeRefreshLayout.setRefreshing(false);
@@ -203,7 +220,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemClickLis
             }
         }
 
-        private class Item {
+        private class Item implements Serializable {
             String title;
             String content;
             String href;

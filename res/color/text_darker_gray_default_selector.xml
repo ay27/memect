@@ -5,5 +5,5 @@
     <item android:state_pressed="true" android:color="@color/text_darker_gray_default_pressed" />
     <item android:state_focused="true" android:color="@color/text_darker_gray_default_pressed" />
     <item android:state_checked="true" android:color="@color/text_darker_gray_default_pressed"/>
-    <item android:color="@color/text_darker_gray_default_default" />
+    <item android:color="@color/black" />
 </selector>

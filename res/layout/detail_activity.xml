@@ -2,15 +2,20 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
+              android:layout_height="match_parent"
+              android:background="@color/gray_background">
 
     <include layout="@layout/toolbar" android:id="@+id/detail_toolbar" />
 
-    <android.support.v4.widget.SwipeRefreshLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
-            android:id="@+id/detail_swipe_refresh">
-
-        <WebView android:layout_width="fill_parent" android:layout_height="fill_parent"
-                android:id="@+id/detail_web_view"/>
+    <android.support.v4.widget.SwipeRefreshLayout
+                                                  android:orientation="vertical"
+                                                  android:layout_width="match_parent"
+                                                  android:layout_height="match_parent"
+                                                  android:id="@+id/detail_swipe_refresh">
+        <ListView android:layout_width="match_parent" android:layout_height="match_parent"
+                  android:id="@+id/detail_list"
+                  android:divider="@null"
+                  android:dividerHeight="8dp"/>
 
     </android.support.v4.widget.SwipeRefreshLayout>
 

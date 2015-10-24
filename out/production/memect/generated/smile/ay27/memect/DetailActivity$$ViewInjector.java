@@ -11,13 +11,13 @@ public class DetailActivity$$ViewInjector {
     target.toolbar = (android.support.v7.widget.Toolbar) view;
     view = finder.findRequiredView(source, 2131296325, "field 'swipeRefreshLayout'");
     target.swipeRefreshLayout = (android.support.v4.widget.SwipeRefreshLayout) view;
-    view = finder.findRequiredView(source, 2131296326, "field 'webView'");
-    target.webView = (android.webkit.WebView) view;
+    view = finder.findRequiredView(source, 2131296326, "field 'listView'");
+    target.listView = (android.widget.ListView) view;
   }
 
   public static void reset(smile.ay27.memect.DetailActivity target) {
     target.toolbar = null;
     target.swipeRefreshLayout = null;
-    target.webView = null;
+    target.listView = null;
   }
 }

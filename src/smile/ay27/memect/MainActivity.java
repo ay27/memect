@@ -1,26 +1,19 @@
 package smile.ay27.memect;
 
-import android.app.Activity;
-import android.content.Intent;
+import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Color;
-import android.support.v4.view.GravityCompat;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.content.Context;
-import android.os.Build;
-import android.os.Bundle;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.widget.*;
-import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.support.v4.widget.DrawerLayout;
 import android.widget.*;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -45,6 +38,12 @@ public class MainActivity extends ActionBarActivity {
     private ActionBarDrawerToggle drawerToggle;
 
     private DrawerListAdapter adapter;
+    private CompoundButton.OnCheckedChangeListener hasPictureSwitchChanged = new CompoundButton.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            MemectApplication.pref.edit().putBoolean(MemectApplication.KEY_HAS_PIC, isChecked);
+        }
+    };
     private AdapterView.OnItemClickListener drawerListItemClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
