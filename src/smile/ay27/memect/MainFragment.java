@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,8 +19,11 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import smile.ay27.memect.widget.CardsAnimationAdapter;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * Created by ay27 on 15/10/23.
@@ -84,10 +88,11 @@ public class MainFragment extends Fragment implements AdapterView.OnItemClickLis
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        ContentLoaderAdapter.Item item = adapter.getItem(position);
+        Item item = adapter.getItem(position);
         Intent intent = new Intent(getActivity(), DetailActivity.class);
         intent.putExtra("Link", item.href);
         intent.putExtra("Title", item.title);
+        intent.putExtra("Position", position);
         startActivity(intent);
     }
 
@@ -95,23 +100,43 @@ public class MainFragment extends Fragment implements AdapterView.OnItemClickLis
     public void onStart() {
         super.onStart();
 
-        swipeRefreshLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                swipeRefreshLayout.setRefreshing(true);
-                adapter.refresh();
-            }
-        });
+//        swipeRefreshLayout.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                swipeRefreshLayout.setRefreshing(true);
+//                adapter.refresh();
+//            }
+//        });
+
+        adapter.loadFromCache();
     }
+
 
     class ContentLoaderAdapter extends BaseAdapter {
 
-        private ArrayList<Item> items;
+        private SerializableList items;
         private Context context;
 
         public ContentLoaderAdapter(Context context) {
-            items = new ArrayList<>();
+            items = new SerializableList();
             this.context = context;
+        }
+
+        public void loadFromCache() {
+            items = (SerializableList) Utils.loadObject("mainFragment" + position);
+            if (items == null) {
+                items = new SerializableList();
+                swipeRefreshLayout.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        swipeRefreshLayout.setRefreshing(true);
+                        adapter.refresh();
+                    }
+                });
+            } else {
+                notifyDataSetInvalidated();
+                Log.i("mainFragment", "load from cache");
+            }
         }
 
         @Override
@@ -121,7 +146,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemClickLis
 
         @Override
         public Item getItem(int position) {
-            return items.get(position);
+            return (Item) items.get(position);
         }
 
         @Override
@@ -140,8 +165,8 @@ public class MainFragment extends Fragment implements AdapterView.OnItemClickLis
                 holder = (ViewHolder) convertView.getTag();
             }
 
-            holder.titleTxv.setText(items.get(position).title);
-            holder.contentTxv.setText(items.get(position).content);
+            holder.titleTxv.setText(((Item)items.get(position)).title);
+            holder.contentTxv.setText(((Item)items.get(position)).content);
 
             return convertView;
         }
@@ -158,7 +183,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemClickLis
 
                 @Override
                 protected ArrayList doInBackground(Void... params) {
-                    items = new ArrayList<Item>();
+                    items = new SerializableList();
 
                     Document doc = null;
                     try {
@@ -184,12 +209,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemClickLis
 
                     }
 
-                    File cacheDir = MemectApplication.appContext.getCacheDir();
-                    if (cacheDir.listFiles().length > 0) {
-                        for (File file : cacheDir.listFiles()) {
-                            file.delete();
-                        }
-                    }
+                    Utils.saveObject(items, "mainFragment"+position);
 
                     return items;
                 }
@@ -199,7 +219,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemClickLis
                 protected void onPostExecute(ArrayList arrayList) {
                     super.onPostExecute(arrayList);
                     if (arrayList == null) {
-                        Toast.makeText(context, "network error", Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, "network timeout", Toast.LENGTH_LONG).show();
                     }
                     notifyDataSetInvalidated();
                     if (swipeRefreshLayout.isRefreshing()) {
@@ -208,6 +228,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemClickLis
                 }
             }.execute();
         }
+
 
         class ViewHolder {
             @InjectView(R.id.list_item_title)
@@ -220,16 +241,17 @@ public class MainFragment extends Fragment implements AdapterView.OnItemClickLis
             }
         }
 
-        private class Item implements Serializable {
-            String title;
-            String content;
-            String href;
+    }
 
-            public Item(String title, String content, String href) {
-                this.title = title;
-                this.content = content;
-                this.href = href;
-            }
+    static class Item implements Serializable {
+        String title;
+        String content;
+        String href;
+
+        public Item(String title, String content, String href) {
+            this.title = title;
+            this.content = content;
+            this.href = href;
         }
     }
 }

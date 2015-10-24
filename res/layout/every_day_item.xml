@@ -24,7 +24,8 @@
             android:textSize="16sp"
             android:textColor="@color/feed_list_item_text"
             android:lineSpacingExtra="6dp"
-            android:paddingTop="8dp"/>
+            android:paddingTop="8dp"
+            android:autoLink="web"/>
     <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

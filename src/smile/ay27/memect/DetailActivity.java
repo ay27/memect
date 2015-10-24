@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,7 +24,9 @@ import smile.ay27.memect.network.ImageCacheManager;
 import smile.ay27.memect.widget.CardsAnimationAdapter;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 
@@ -48,14 +51,18 @@ public class DetailActivity extends ActionBarActivity implements AdapterView.OnI
         }
     };
 
+    private String title;
+    private int position;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.detail_activity);
         ButterKnife.inject(this);
 
-        String title = getIntent().getStringExtra("Title");
+        title = getIntent().getStringExtra("Title");
         String link = getIntent().getStringExtra("Link");
+        position = getIntent().getIntExtra("Position", 0);
 
         toolbar.setTitleTextColor(Color.WHITE);
         toolbar.setTitle(title);
@@ -79,12 +86,7 @@ public class DetailActivity extends ActionBarActivity implements AdapterView.OnI
     @Override
     protected void onStart() {
         super.onStart();
-        swipeRefreshLayout.post(new Runnable() {
-            @Override public void run() {
-                swipeRefreshLayout.setRefreshing(true);
-                adapter.refresh();
-            }
-        });
+        adapter.loadFromCache();
     }
 
     @Override
@@ -101,7 +103,7 @@ public class DetailActivity extends ActionBarActivity implements AdapterView.OnI
 
     }
 
-    static class Item {
+    static class Item implements Serializable {
         String src;
         String srcHref;
         String[] keywords;
@@ -142,22 +144,22 @@ public class DetailActivity extends ActionBarActivity implements AdapterView.OnI
 
         String link;
         Context context;
-        ArrayList<Item> headlines;
-        ArrayList<Item> dynamicList;
+        SerializableList<Item> headlines;
+        SerializableList<Item> dynamicList;
 
         public DetailAdapter(Context context, String link) {
             this.context = context;
             this.link = link;
 
-            headlines = new ArrayList<>();
-            dynamicList = new ArrayList<>();
+            headlines = new SerializableList<>();
+            dynamicList = new SerializableList<>();
         }
 
         public void refresh() {
-            headlines = new ArrayList<>();
-            dynamicList = new ArrayList<>();
+            headlines = new SerializableList<>();
+            dynamicList = new SerializableList<>();
 
-            new AsyncTask<Void, Void, Void>() {
+            new AsyncTask<Void, Void, List>() {
 
                 @Override
                 protected void onPreExecute() {
@@ -165,12 +167,13 @@ public class DetailActivity extends ActionBarActivity implements AdapterView.OnI
                 }
 
                 @Override
-                protected Void doInBackground(Void... params) {
+                protected List doInBackground(Void... params) {
                     Document doc = null;
                     try {
                         doc = Jsoup.connect(link).timeout(10000).get();
                     } catch (IOException e) {
                         e.printStackTrace();
+                        return null;
                     }
                     Element container = doc.getElementById("container");
 
@@ -182,12 +185,20 @@ public class DetailActivity extends ActionBarActivity implements AdapterView.OnI
                         }
                     }
 
-                    return null;
+                    Utils.saveObject(headlines, "Detail_Headline"+position+"_"+title);
+                    Utils.saveObject(dynamicList, "Detail_Dynamic"+position+"_"+title);
+
+                    return headlines;
                 }
 
                 @Override
-                protected void onPostExecute(Void aVoid) {
-                    super.onPostExecute(aVoid);
+                protected void onPostExecute(List list) {
+                    super.onPostExecute(list);
+
+                    if (list == null) {
+                        Toast.makeText(context, "network timeout", Toast.LENGTH_LONG).show();
+                    }
+
                     notifyDataSetInvalidated();
                     swipeRefreshLayout.setRefreshing(false);
                 }
@@ -202,9 +213,9 @@ public class DetailActivity extends ActionBarActivity implements AdapterView.OnI
         @Override
         public Item getItem(int position) {
             if (position < headlines.size()) {
-                return headlines.get(position);
+                return (Item) headlines.get(position);
             } else {
-                return dynamicList.get(position - headlines.size());
+                return (Item) dynamicList.get(position - headlines.size());
             }
         }
 
@@ -245,6 +256,29 @@ public class DetailActivity extends ActionBarActivity implements AdapterView.OnI
             ));
 
             return convertView;
+        }
+
+        public void loadFromCache() {
+
+            headlines = (SerializableList<Item>) Utils.loadObject("Detail_Headline"+position+"_"+title);
+            dynamicList = (SerializableList<Item>) Utils.loadObject("Detail_Dynamic"+position+"_"+title);
+
+            if (headlines == null || dynamicList == null) {
+
+                headlines = new SerializableList<>();
+                dynamicList = new SerializableList<>();
+
+                swipeRefreshLayout.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        swipeRefreshLayout.setRefreshing(true);
+                        adapter.refresh();
+                    }
+                });
+            }
+            else {
+                notifyDataSetInvalidated();
+            }
         }
 
         class ViewHolder {
