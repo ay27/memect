@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="smile.ay27.memect"
-          android:versionCode="1"
-          android:versionName="1.0">
-    <uses-sdk android:minSdkVersion="19"/>
+          android:versionCode="2"
+          android:versionName="1.1">
+    <uses-sdk android:minSdkVersion="14"/>
 
     <uses-permission android:name="android.permission.INTERNET"/>
 
@@ -11,7 +11,7 @@
                  android:theme="@style/AppTheme"
             android:name=".MemectApplication">
         <activity
-                android:name=".WelcomeActivity"
+                android:name=".activity.WelcomeActivity"
                 >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,7 +19,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity"/>
-        <activity android:name=".DetailActivity"/>
+        <activity android:name=".activity.MainActivity"/>
+        <activity android:name=".activity.DetailActivity"/>
+        <activity android:name=".activity.ImgDetailActivity" android:theme="@style/Translucent"/>
     </application>
 </manifest>

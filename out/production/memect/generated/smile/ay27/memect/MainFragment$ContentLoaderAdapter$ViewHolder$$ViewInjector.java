@@ -7,9 +7,9 @@ import butterknife.ButterKnife.Finder;
 public class MainFragment$ContentLoaderAdapter$ViewHolder$$ViewInjector {
   public static void inject(Finder finder, final smile.ay27.memect.MainFragment.ContentLoaderAdapter.ViewHolder target, Object source) {
     View view;
-    view = finder.findRequiredView(source, 2131296337, "field 'titleTxv'");
+    view = finder.findRequiredView(source, 2131296338, "field 'titleTxv'");
     target.titleTxv = (android.widget.TextView) view;
-    view = finder.findRequiredView(source, 2131296338, "field 'contentTxv'");
+    view = finder.findRequiredView(source, 2131296339, "field 'contentTxv'");
     target.contentTxv = (android.widget.TextView) view;
   }
 
