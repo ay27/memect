@@ -304,10 +304,11 @@ public class DetailActivity extends ActionBarActivity implements AdapterView.OnI
             holder.imgView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(DetailActivity.this, ImgDetailActivity.class);
-                    intent.putExtra("picHref", item.picHref);
-                    startActivity(intent);
-                    overridePendingTransition(0, 0);
+                    new ImgDialog(DetailActivity.this, item.picHref).show();
+//                    Intent intent = new Intent(DetailActivity.this, ImgDetailActivity.class);
+//                    intent.putExtra("picHref", item.picHref);
+//                    startActivity(intent);
+//                    overridePendingTransition(0, 0);
                 }
             });
 

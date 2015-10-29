@@ -83,4 +83,11 @@
     </style>
 
     <color name="translucent">#77000000</color>
+
+
+    <style name="full_screen_dialog" parent="android:Theme.Translucent">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowNoTitle">false</item>
+    </style>
+
 </resources>
